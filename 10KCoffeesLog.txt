@@ -238,3 +238,14 @@ If a desktop application, use that extra space! Zoom feature could slide-right a
 
 Drag to upload!
 
+NOTES:
+
+Error handling on the client-side (in general as well, though client-side code is currently too optimistic and facilitates no catching of errors, specifically on requests)
+
+With respect to the above timeout in KNOWN BUGS, adding in a user-interactable reload button on timeout is very likely the best way to handle this.
+
+We used pipe() once, (and lightly) for getPosts, but Andrew reccomends getting more familiar with the function due to it's flexibility and versatility (it does pipe data through
+chained functions after all!). Specifically it can be used when setting up subscriptions, in order to manage the returned data - especially when multiple observables are returned.
+
+I have some reduntant local data that can be removed. Specifically the updatedPosts array in the post.service that is used and then discarded.
+
