@@ -1,0 +1,9 @@
+body{
+  background-color: #f7ede2;
+}
+
+.component-container {
+  max-width: 600px;
+  min-width: 300px;
+  margin: auto;
+}

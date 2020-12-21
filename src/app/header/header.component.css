@@ -1,0 +1,19 @@
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.spacer {
+  flex: auto;
+}
+
+.title {
+  font-size: 30px;
+  font-family: 'Bebas Neue', cursive;
+}

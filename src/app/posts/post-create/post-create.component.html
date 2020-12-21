@@ -1,0 +1,81 @@
+
+<mat-card [style.backgroundColor]="'#a8dadc'">
+
+  <!-- Show spinner when isLoading-->
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+
+  <!-- Header contains an image (dummy profile pic), a title (dummy display name), and subtitle (dummy uname) -->
+  <!-- Only show if not loading -->
+  <mat-card-header *ngIf="!isLoading">
+    <div mat-card-avatar class="header-image"></div>
+    <mat-card-title>Shiba Inu</mat-card-title>
+    <mat-card-subtitle>@The_Greyscale_Photographer</mat-card-subtitle>
+  </mat-card-header>
+
+  <!-- Input is a form, allowing us to use FormGroups and FormControls from Angular-->
+  <!-- Submit triggers our onSavePost() function-->
+  <!-- Only show if not loading -->
+  <form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
+    <div>
+      <button mat-stroked-button type="button" color='primary' (click)='filePicker.click()'>Select Image</button>
+      <input type='file' #filePicker (change)="onImagePicked($event)"> <!--Proxy Click. Hidden visibility and is triggered by the above material-design button -->
+    </div>
+
+    <mat-tab-group [(selectedIndex)]="this.index" #filterTabGroup *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
+
+      <mat-tab label="Default">
+        <div class="image-preview"> <!-- Show image preview only if an image has been chosen -->
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Greyscale">
+        <div class="image-preview filter_greyscale"> <!-- Show image preview only if an image has been chosen -->
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Flip Hue">
+        <div class="image-preview filter_hue_flip"> <!-- Show image preview only if an image has been chosen -->
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      </mat-tab>
+      <mat-tab label="Sepia">
+        <div class="image-preview filter_sepia"> <!-- Show image preview only if an image has been chosen -->
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      </mat-tab>
+      <mat-tab label="Saturate">
+        <div class="image-preview filter_saturate"> <!-- Show image preview only if an image has been chosen -->
+          <img [src]="imagePreview" [alt]="form.value.title">
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+    <mat-form-field>
+      <input
+      matInput
+      type="text"
+      formControlName="title"
+      placeholder="Post Title"
+      >
+      <mat-error *ngIf="form.get('title').invalid"> Please Enter a post title</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+      matInput
+      formControlName="content"
+      placeholder="Post Content"
+      ></textarea>
+      <mat-error *ngIf="form.get('content').invalid"> Please Enter post content</mat-error>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="accent"
+      type="submit">
+      Save Post
+    </button>
+  </form>
+
+
+
+</mat-card>

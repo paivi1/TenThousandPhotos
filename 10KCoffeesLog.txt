@@ -1,0 +1,240 @@
+created project with: ng new ten-thousand-photos
+npm install --save-dev nodemon
+npm install --save express
+npm install --save mongoose
+npm install --save multer
+
+bodyparser
+multer (for Node and express files)
+
+ng serve
+ng add @angular/material
+
+Notes:
+- It started off under the name Ten-Thousand-Photos, but I wanted to set a header logo from my pixel art work, and the leaf I created for UI in another
+project worked well enough so now it displays "Photo Leaf" in the header.
+
+- I'm having a crisis with endline semicolons and camelCase vs snake_case after doing so much python for the bootcamp.
+
+- I realize I'm using the word 'async' a lot when it should be implied. I'm normally pretty bad with JS async calls, so I think I'm just proud or something.
+- MIME type validator is an instance of Abstract Control, but should this be changed to FormControl?
+
+- Angular component naming convention is unique and helpful, but twists me up when reffering to them in comments & logs. Ex. posts.service.ts
+or posts.service?
+
+- I'm using a lot of inline styling. I want to say I look down on it, but it helps keep the css files simple, and is managable if I don't overdo it.
+
+------
+
+Ongoing List of Requirements:
+- User should be able to create a new post
+- User should be able to add a Title, Caption, and Image to the post.
+- Due to the nature of the app we are creating, the Title and Image fields should be required, and the caption optional.
+- The user should be notified of posts that are not saved, as well as why (to the extent possible). This means alerts or something if, say, the 'title' field is empty
+- The user should be able to select an image in an intuitive way. (Two contenders. We will be going with 'button-click -> opens file explorer' instead of drag-n-drop bc I don't know the latter)
+- The user should be able to see all posts saved in the database [No page-limit in API, all posts are returned]
+- The user should be able to EDIT posts after submission.
+- The user should be able to DELETE posts after submission.
+- Images uploaded to the app should be displayed in as consistent a size as possible
+
+- Photo sharing apps should look aesthetically pleasing to some degree.
+- The app should let you apply filters to photos you upload
+
+<transition - Header Component >
+
+Starting with Navigation. I think this is a great way to map out what different views I'll need for this assignment, as well as a solid
+starting point for any thing I add on top of that if able. Good framing.
+
+Created Header Component as our navigation bar. Currently using two links; one for browsing posts (app name), and one for creating them. Both unassigned as
+for now.
+
+I want to set up the 'create post' component first. This is going to require a post class/model used to instantiate new posts.
+
+Simple 'Post' model created.
+
+<transition - Create Post Component >
+
+Working on Post-Create. Have the basic UI up but definately needs styling to some degree. I'm going to use the Angular Material Design Library to make things look nice quickly.
+
+I like the way the Display picture and user profile info looks on top of the example Material Design Card. I'm going to use that with
+dummy profile info, which should help evoke an immediate understanding of the application through similarities to twiiter and instagram.
+It'll also allow me a better grip of what I want IF I find the time to add in a login feature.
+
+Ok. If I want to go about this in the best way possible wrt modern MEAN design, I'm going to have to use NGForms and Form Controls.
+To be honest, I'm seeing a lot of similarities across Google's technologies. ngOnInit() seems to be very similar to Android's
+onCreate() method. Hopefully I can initialize all my Form variables, validators, etc. here
+
+OK! Form validation seems to be working here! I find it kind of hard to get the hang of since Angular seems to do so much behind the scenes.
+By setting the formControlName of each input I can capture the values in onSubmit(), verified by logging the form.values to the console (classic).
+I then reset the form.
+
+Validators looking decent. I've set the minimum title length to 1 just to ensure that the title exists. The Material design library adds a really
+nice way of notifying the user of invalid inputs, along with a sleek animation. I have the title validator 'updateOn' value set to 'onBlur'. This seems
+to be the best compromise between continuously checking and not overwhelming the user by notifying the user that the title isn't long enough before
+they even type anything.
+
+<transition - Node API >
+From the tutorials I've used to learn Angular I WANT to set up a page for displaying a list of posts. But I feel like that was for
+setting up a frontend and using dummy data. Knowing what I'll need for the API, which are:
+  - Node Server
+  - A MongoDB Atlas Project and cluster to connect to
+  - Need to set headers and such to deal with CORS errors (Will I? Is it just a local setup-specific problem?)
+  - Express Routes:
+    ~ Generic POST for saving a Post to the DB
+    ~ Generic GET for retrieving all posts
+    ~ Specific GET with 'id' parameter for retrieving a single, specified post
+    ~ Specific DELETE with 'id' parameter for deleting a single, specified post
+    ~ Specific PUT request with 'id' parameter for updating a single, specified post (used to be PATCH, but PUT is working better in retrospect)
+
+I should be able to use this as a checklist. I'll set up the API first and incrementally build out the 'list of posts' view to test it.
+
+Similar to the Hostable 2.0 mobile project, I think that it may be smart to centralize the code for interacting with the API using a
+service to be instatiated in components that need to use it and calling functions through there. I guess it'd act like a viewmodel/repository
+as well? It's going to provide response data, as well as store a local copy so that it doesn't need to be held in multiple angular components. That way
+we aren't relying on instances that may be reused and repurposed, as well as the hassle that comes with that (I think?)
+
+--------------------------------------------
+Left off at the post.service.ts file (THE LOG GETS MESSY HERE AS I WASN'T ABLE TO WORK ON COMPONENTS SEQUENTIALLY AND ENDED UP WORKING ON THE SERVER, POST-CREATE, POST-LIST, and POST-SERVICE in parallel)
+--------------------------------------------
+
+Setup server to listen on port: 3000 unless otherwise specified by the process environment
+
+Setup addPost() in post.service.ts to accept a title, content, and an image File. Using httpClient and observables, I use these values to send an
+async POST request to the server. I use the response to assign the local post it's server-assigned ID, and update my local copy of the posts array.
+
+Setup updatePost() in post.service.ts to accept the same arguments as addPost() but with the exception that the image argument may be either
+a File OR an existing image file path. The dichotomy here divides the update control flow into two sections. If the image
+field is a File object, the user has selected a new image for the post and thus we cannot send the data as a JSON object. If
+the field is a string (as we set it in the DB, denoting the path used to retrieve the image from the server), then the image itself is not being
+modified (the update is to the title or caption) and we can use a simpler approach to sending the data to the server using JSON. It then updates
+the local copy of the posts array. !!!!(kind of redundant now that the data is fetched from the server on post-list initialization)!!!
+
+<transition - Create Post Component >
+
+Created a new validator for use in the post-create form. Since we want to ensure that the file uploaded as an image in our post truly is an image,
+we create a MIME-type validator. MIME being the indentifier label for different types/formats of media/data. It was something a bit more advanced
+that was shown in an Angular tutorial and required a lot of StackOverflowing to make work, especially the header which I don't fully understand (promises, ugh).
+Basically the function takes the file, loads it, and reads it as a Uint8Array. It takes the first 4 bytes, converts them to hexidecimal,
+and assigns it to variable 'header' it then uses a switch to define which values are valid and which are not, depending on these hex codes.
+If the file is valid, the validator returns null (through an observable?), otherwise it returns an error that the form validator will catch.
+<!!! Could there be a possible vulnerability with the validator returning true if the value is a string? It's needed to allow edits, but is there
+a way for the user, if they have knowledge of the backend file structure, to access image files through passing in a custom string as a file? !!!>
+
+<transition - Create Post Component >
+
+I realized pretty quickly the limitations of trying to create the API to test my post-create component.
+I could call the API route in the broswer to see if my data was being stored/sent back correctly, but what really matters is if the data is
+displayed correctly on the front-end. Thus, I've created the post-list component. I'm surprised how easy it was to create using Angular's
+NgModule. The structural directives (if that's what they're called), especially ngFor and ngIf, make the html really dense and easy to understand.
+
+<transition - Node API >
+
+Created the MongoDB Atlas project and cluster.
+
+Added a POST route to add newly created posts to the database. After learning how to use 'multer' to store my image files on the server (not the
+database) I'm never going back to storing images as a bitmap string on the database ever again! (Yes, this was how I did it before, sadly)
+
+Added GET request to fetch all posts. So post-create can send posts with the POST request and the post-list can fetch them all for display.
+Next should be DELETE just so I can remove posts in the DB to de-clutter all the built up test-entries.
+
+Added DELETE request targeting a specific ID as well as added the necessary post.service method/post-list.component.html button to trigger the
+delete on a post.
+
+Currently adding the GET request for a specific ID and PUT request to update a single post since I'll need the former to create the latter.
+
+--------------------------------------------
+Left off at the create-post.component.ts file (The image is not showing up in the preview when editing the post)
+--------------------------------------------
+
+Time to spice up this bad boy with some css.
+
+Going to use mat-cards with a slight z-index to make them pop as indvidual posts, as well as be styled more like common photo sharing mobile-apps.
+
+Going with a soft colour pallette from Coolors.co because I think that sets the tone for the app's would-be target audience. Buttons will be brighter to stand out.
+
+Using a dummy header to give the facade of an account, although I don't think I'll be implementing accounts. A good placeholder though!
+
+I've changed the caption field to look more like a comment. This because an image's title is more of a caption than anything else, excluding scenarios where the image
+is a piece of art or something actually warranting a title without coming off pretentious. Similar to Instagram, both are on the bottom.
+
+Moved the 'edit' and 'delete' buttons to a vertical-dropdown menu. Expansion panels were cool and I wanted to use them, but I'm struggling to use them to display the information
+in a way I like.
+
+<transition - Adding filters >
+
+Just added a tabs-component to give the user different filter options, as well as reflect the choice in the preview! Looks nice! Next I have to find a way to re-capture the
+image file so that the choice of filter is represented on the server as well.
+
+<transition - Bug fix >
+I'm not cleaning my input strings! Question marks, surely amongst others, are breaking the POST request. It is instead trying to find the post! It's a file-not-found error when
+looking in the '/images' folder, and is still assinging a timestamp. Output below after submitting post with title 'is?'
+////
+Error: ENOENT: no such file or directory, open 'C:\Users\ryuji\OneDrive\Desktop\Personal\Creation\TenThousandCoffeesPhotoApp\ten-thousand-photos\backend\images\is?-1608418754429.png'
+////
+
+This lets us know two things. 1. It's running through the multer storage middleware, as that's where we assign the timestamp. 2. It may be the second call to retrieve the image from
+the server that gives us the error message, as it's looking in the '/images' folder. Since it can't find it, it could be that the resource FAILS TO BE CREATED due to the unclean string,
+or that it CAN'T BE FOUND because of the unclean string.
+
+Tomorrow: Write a way to clean the string, find a way to upload a image file that's been modified with a filter, and test hosting it from a different machine to ensure Andrew/10K can
+run it during inspection.
+
+--------------------------------------------
+Left off at trying to fix this bug where files aren't saved using the intended name
+--------------------------------------------
+
+Weirdly, some specific uses of the forward slash truncates my string. 'legitposttitle/na' is seen on the server as 'na' (meaning the n isn't being interpretted as a newline),
+'legitposttitle/a' is seen as 'a', BUT legitposttitle/ is seen as 'legitposttitle', and 'legitposttitle /' is seen as 'legitposttitle '. What is this string doing? Frontend?
+
+Checked the string throughout the create-component onSave() and the post.service addPost() both at the argument and when set as postData and saw nothing unqiue.
+
+Printing the contents of the body as the request comes in to try and see how the payload represents it gives too much and I don't know enough about requests and files in them
+to inspect them not using multer. With time constraints I guess I'll have to just leave it.
+
+My best guess is it's a filepath problem, likely how file.originalname gets the name of the set file like if it's represented in a path already, such as
+C:/Desktop/Pictures/<myfilename>. If it just takes the string after the last '/' THEN I could see 'legitposttitle/na' being interpreted as 'na'.
+
+
+<transition - Saving filters on images >
+Call me crazy, but I'm going to save it by passing in the selected filter (using Tabgroup.selectedindex) as a field in the post, and having the frontend
+css handle displaying it. Benefits: IDEALLY when updating and changing just the imgage filter, since the image wont trigger a change event, the new filter field is the only thing passed
+and updated, reducing the network usage and preserving the original on the server.
+
+Updating API endpoints, models, and object classes by adding a 'filters' field to the Post object. This holds the selected filter as a string to add to an html element later
+(meaning that we can concatonate two or more filters to combine them if we wanted to implement that feature). Drawback is that filters are hardcoded into the presentation layer (-Scalability -Interoperability).
+
+Everything works except for the create/edit post component which wont reflect the previously applied filter when editting an image. The
+worst part is that it applied all the filters correctly as it did when creating the image, it just can't get a referrence to the MatTabGroup
+in order to set it's 'selectedindex' property!
+
+Taking a different approach. I'm going to use two-way binding to set the tab equal to an index in my typescript file and manipulate that. At least then I won't
+be relying on a component that may not be initialized when my script runs OnInit()/gets a response from the server.
+
+Truly a foolish man, I had been testing on a sepia filter, the only filter that somehow had not been attempting to set a filter index. Now that that's fixed
+my different approach was successful.
+
+I though I might've had more trouble with the two-way binding, supposing it might not allow me to change tabs on click (due to it being set to the .ts file's index
+variable) but it seems good.
+
+KNOWN BUGS/THINGS TO BE FIXED:
+
+If content hasn't loaded after a set timeout, I should send another request. Currently if the server is started after the app, the load anim won't stop until refresh.
+
+Need a safer way to sanatize strings on the server-side.
+
+On images taller than the screen, flipping between filter tabs sends you back to the top of the page.
+
+IMPROVEMENTS:
+
+Add a more robust image-filter system with better Interoperability.
+
+Add in user accounts to make this into a legitimate photo-sharing app with posts bound to those who upload them.
+
+Add an image-zoom function when clicking on a post image.
+
+Add a likes and/or comments component, the values of which could easily be stored in the database (moderation would be a mess without accounts though)
+
+If a desktop application, use that extra space! Zoom feature could slide-right as the feed slides-left! Profiles could be similar?
+
+Drag to upload!
+

@@ -1,0 +1,58 @@
+
+mat-card {
+  width: 40vw;
+  margin: 1rem auto;
+}
+mat-card-subtitle {
+  margin-bottom: 0px;
+}
+form {
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+mat-form-field,
+textarea {
+  width: 100%
+}
+
+.header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+mat-spinner {
+  margin: auto;
+}
+
+input[type='file']{
+  visibility: hidden;
+}
+
+.image-preview {
+  margin: 1rem 0;
+  align-content: center;
+}
+
+.image-preview img{
+  width: 99%; /* Space for borders*/
+  box-shadow: 2px 2px 5px;
+  border: solid 2px cornsilk  ;
+  overflow: hidden;
+}
+
+.filter_greyscale {
+  filter: grayscale(100%); /* IE6-9 */
+}
+
+.filter_hue_flip {
+  filter: hue-rotate(180deg);
+}
+
+.filter_sepia {
+  filter: sepia(100%);
+}
+
+.filter_saturate {
+  filter: saturate(500%);
+}

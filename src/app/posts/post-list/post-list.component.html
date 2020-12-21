@@ -1,0 +1,58 @@
+<div class = "content-area">
+  <!-- Show spinner when isLoading-->
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+
+  <!-- A message for QoL if there are no posts in the DB-->
+  <p class="info-text mat-body-1" *ngIf="posts.length <= 0 && !isLoading" >No posts added yet!</p>
+
+  <mat-card *ngFor="let post of posts.slice().reverse() ">
+
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+
+    <!-- Header contains an image (dummy profile pic), a title (dummy display name), and subtitle (dummy uname) -->
+    <mat-card-header>
+      <div mat-card-avatar class="header-image"></div>
+      <mat-card-title style = "margin: 0;">Paivi Komai</mat-card-title>
+      <mat-card-subtitle style = "margin: 0;">@The_Greyscale_Photographer</mat-card-subtitle>
+    </mat-card-header>
+    <!-- Loard the image by setting the post's src = 'imagePath', similar with the Title and Caption-->
+    <div [class]="'post-image ' + post.filters">
+      <img [src]="post.imagePath" [alt]="post.title">
+    </div>
+    <div class = "post-title">
+      <!--Title-->
+      <p style="flex: auto; padding-top: 0.5rem;  font-size: 1rem;">
+        <span style="font-weight: bold;"></span> {{ post.title }}
+      </p>
+
+      <!-- Options Button -->
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <!-- Options menu pop-up-->
+      <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
+
+        <!-- Edit button uses the Angular router to bring us to the post-create/edit page and save the post's id as a router param-->
+        <button mat-menu-item  [routerLink]="['/edit', post.id]">
+          <mat-icon>edit</mat-icon>
+          <span color="primary">Edit</span>
+        </button>
+
+        <!-- Delete button triggers delete on post through post.service-->
+        <button mat-menu-item color="warn" (click)='onDelete(post.id)'>
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+
+      </mat-menu>
+    </div>
+
+    <!-- Is it content, is it a caption, is it content?? Apperently I can't decide -->
+    <div class = "post-caption">
+      <span style="font-weight: bold;">Paivi Komai: </span> <p> {{ post.content }}</p>
+    </div>
+  </mat-card>
+  <a href="#top" style="text-decoration: none;"><button mat-raised-button color = 'accent'>To Top</button></a>
+
+</div>

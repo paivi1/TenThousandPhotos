@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+.content-area {
+  padding: 1rem 1rem 1rem 1rem;
+
+}
+.info-text {
+  text-align: center;
+}
+
+mat-spinner {
+  margin: auto;
+}
+
+mat-card {
+  margin: 1rem 0rem;
+  padding: 0;
+  background-color: cornsilk;
+}
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,1),
+              0 1px 1px 0 rgba(0,0,0,1),
+              0 1px 3px 0 rgba(0,0,0,1);
+}
+mat-card-header {
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+.post-title {
+  display: flex;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px gray solid;
+}
+
+.post-caption {
+  padding-left: 5px;
+  padding-bottom: 10px;
+}
+
+.post-image {
+  width:100%;
+}
+
+/* For displaying filters*/
+.filter_greyscale {
+  filter: grayscale(100%); /* IE6-9 */
+}
+
+.filter_hue_flip {
+  filter: hue-rotate(180deg);
+}
+
+.filter_sepia {
+  filter: sepia(100%);
+}
+
+.filter_saturate {
+  filter: saturate(500%);
+}
+
+/* Aesthetic choices*/
+.post-image img {
+  max-height: 30rem;
+  width: 100%;
+  /* box-shadow: 2px 2px 5px; */
+  box-sizing: border-box;
+}
+
